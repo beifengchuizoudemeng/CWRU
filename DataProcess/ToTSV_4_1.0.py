@@ -5,10 +5,9 @@ Created on Monday Aug 30 15:17:00 2019
 school:HUST
 @author: KJ.Zhou
 """
-#生成多序列时间分类数据集
+
 #改进取样方法，随机选取样本的起始位置，然后从起始位置开始截取样本长度个采样点得到一个样本
-#生成的数据说明，每一行包括标签和两个传感器数据，比如样本长度为400，那么一行数据长度为801，第一列是标签
-#第2到第401是传感器1，第402到第801是传感器2的数据
+
 from scipy.io import loadmat
 import os
 import random
@@ -22,11 +21,11 @@ def mkdir(path):
         return True
 
 root = 'c:/Users/dreamby/Desktop/CWRU'
-path = root+'/'+'Datasets/CWRU_4/1730'
+path = root+'/'+'Datasets/CWRU_4/1797'
 
 filenames = os.listdir(path)
 DE_times = []
-FE_times = []
+#FE_times = []
 Label_list = []
 #由于本代码没有自动边界检测，所以下面样本长度以及样本数量以及从原文件中截取多少采样点自己设定的时候不要越界了。
 sample_length = 400 #样本长度，根据需求修改
@@ -47,17 +46,17 @@ for filename in filenames:
         if 'FE_time' in key:
                 index2 = key
     DE_time = m[index1]
-    FE_time = m[index2]
+    #FE_time = m[index2]
     if label!='Normal':
         DE_time = DE_time[0:120000]
-        FE_time = FE_time[0:120000]
+        #FE_time = FE_time[0:120000]
     else:
         DE_time = DE_time[0:240000]   
-        FE_time = FE_time[0:240000]
+        #FE_time = FE_time[0:240000]
     DE_times.append(DE_time)
-    FE_times.append(FE_time)
+    #FE_times.append(FE_time)
     
-path_save = root+'/'+'Series/Mul_CWRU_4/CWRU_1730'
+path_save = root+'/'+'Series/Single_CWRU_4/CWRU_1797'
 mkdir(path_save)
 
 for i in range(len(Label_list)):
@@ -75,13 +74,14 @@ for i in range(len(Label_list)):
 
         records = []
         begins=random.sample(range(0,int(len(DE_times[i])*100000/120000)),int(len(DE_times[i])*sample_number/120000))
+        
         for begin in begins:
                         sample1 = []
-                        sample2 = []
+                        #sample2 = []
                         for m in range(sample_length):
                                 sample1.extend(list(DE_times[i][begin+m]))
-                                sample2.extend(list(FE_times[i][begin+m]))
-                        record = [idx] + sample1 + sample2
+                                #sample2.extend(list(FE_times[i][begin+m]))
+                        record = [idx] + sample1 #+ sample2
                         records.append(record) 
 
         temp = np.array(records)
